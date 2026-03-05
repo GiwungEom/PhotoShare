@@ -29,9 +29,9 @@ class BluetoothConnection @Inject constructor(
     private val adapter = bluetoothManager.adapter
     private var socket: BluetoothSocket? = null
 
-    private val _isAvailable: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    override val isAvailable: Flow<Boolean>
-        get() = _isAvailable.asStateFlow()
+    private val _isReadyToScan: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    override val isReadyToScan: Flow<Boolean>
+        get() = _isReadyToScan.asStateFlow()
 
     private companion object {
         val APP_UUID: UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000")
@@ -44,7 +44,7 @@ class BluetoothConnection @Inject constructor(
                     BluetoothAdapter.EXTRA_STATE,
                     BluetoothAdapter.ERROR
                 )
-                _isAvailable.value == (state == BluetoothAdapter.STATE_ON)
+                _isReadyToScan.value == (state == BluetoothAdapter.STATE_ON)
             }
         }
     }
@@ -53,7 +53,7 @@ class BluetoothConnection @Inject constructor(
     override suspend fun scan(): List<Device> {
         return coroutineScope {
             withTimeout(5_000L) {
-                _isAvailable.first { it }
+                _isReadyToScan.first { it }
                 adapter.bondedDevices?.map {
                     Device(
                         name = it.name,
