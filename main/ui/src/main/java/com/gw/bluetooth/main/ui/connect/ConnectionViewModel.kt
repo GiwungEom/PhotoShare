@@ -2,25 +2,21 @@ package com.gw.bluetooth.main.ui.connect
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gw.bluetooth.main.ui.connect.model.ConnectIntent
+import com.gw.bluetooth.main.ui.connect.model.ConnectUiState
+import com.gw.bluetooth.main.ui.connect.model.Device
+import com.gw.bluetooth.main.ui.connect.model.toDomain
 import com.gw.photoshare.domain.connection.DeviceConnection
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-data class ConnectUiState(val devices: List<String>) {
-    companion object {
-        val EMPTY = ConnectUiState(devices = emptyList())
-    }
-}
-
-sealed interface ConnectIntent {
-    object Scan : ConnectIntent
-}
 
 @HiltViewModel
 class ConnectViewModel @Inject constructor(
@@ -32,6 +28,17 @@ class ConnectViewModel @Inject constructor(
     private val channel: Channel<ConnectIntent> = Channel(capacity = Channel.UNLIMITED)
 
     init {
+        receiveIntent()
+        observeConnectionState()
+    }
+
+    fun onIntent(intent: ConnectIntent) {
+        viewModelScope.launch {
+            channel.send(intent)
+        }
+    }
+
+    private fun receiveIntent() {
         viewModelScope.launch {
             for (intent in channel) {
                 when (intent) {
@@ -41,22 +48,28 @@ class ConnectViewModel @Inject constructor(
         }
     }
 
-    fun onIntent(intent: ConnectIntent) {
+
+    private fun observeConnectionState() {
         viewModelScope.launch {
-            channel.send(intent)
+            deviceConnection.isReadyToScan
+                .onEach { isReady -> _uiState.update { it.copy(isScanReady = isReady) } }
+                .collect()
         }
     }
 
     private fun scanDevices() {
         viewModelScope.launch {
-            val devices = deviceConnection.scan()
-            _uiState.update { it.copy(devices = devices) }
+            _uiState.update {
+                it.copy(
+                    devices = deviceConnection.scan().map(Device::toUi)
+                )
+            }
         }
     }
 
-    private fun onConnectionCalled(deviceId: String) {
+    private fun onConnectionCalled(device: Device) {
         viewModelScope.launch {
-            deviceConnection.connect(deviceId)
+            deviceConnection.connect(device.toDomain())
         }
     }
 

@@ -1,32 +1,68 @@
 package com.gw.bluetooth.main.ui.connect
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gw.bluetooth.main.ui.connect.model.ConnectIntent
+import com.gw.bluetooth.main.ui.connect.model.ConnectUiState
 
 @Composable
 fun ConnectionScreen(
-    onDeviceClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ConnectViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState: ConnectUiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.onIntent(ConnectIntent.Scan)
-    }
+    ConnectionScreen(
+        uiState = uiState,
+        onScanClicked = { viewModel.onIntent(ConnectIntent.Scan) },
+        modifier = modifier
+    )
+}
 
-    Box(modifier = modifier) {
+@Composable
+private fun ConnectionScreen(
+    uiState: ConnectUiState,
+    modifier: Modifier = Modifier,
+    onScanClicked: () -> Unit = {}
+) {
+    Column(modifier = modifier) {
+        BluetoothInfo(
+            isScanReady = uiState.isScanReady,
+            onScanClicked = onScanClicked
+        )
         LazyColumn {
-            items(items = uiState.value.devices) {
+            items(items = uiState.devices) {
                 Text(text = "Device Id $it")
             }
+        }
+    }
+}
+
+@Composable
+private fun BluetoothInfo(
+    isScanReady: Boolean,
+    onScanClicked: () -> Unit = {}
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        val readyText = if (isScanReady) "Ready" else "Not Ready"
+        Text("Bluetooth is $readyText")
+        Spacer(modifier = Modifier.weight(1f))
+        Button(
+            enabled = isScanReady,
+            onClick = onScanClicked
+        ) {
+            Text("Search Device")
         }
     }
 }
