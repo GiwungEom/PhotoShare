@@ -1,6 +1,6 @@
 package com.gw.photoshare.di.connection
 
-import com.gw.photoshare.connection.FakeConnection
+import com.gw.photoshare.bluetooth.BluetoothConnection
 import com.gw.photoshare.domain.connection.DeviceConnection
 import dagger.Binds
 import dagger.Module
@@ -11,5 +11,5 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 abstract class ConnectionModule {
     @Binds
-    abstract fun bindConnection(connection: FakeConnection): DeviceConnection
+    abstract fun bindConnection(connection: BluetoothConnection): DeviceConnection
 }
