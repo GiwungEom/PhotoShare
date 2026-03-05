@@ -29,13 +29,9 @@ class BluetoothConnection @Inject constructor(
     private val adapter = bluetoothManager.adapter
     private var socket: BluetoothSocket? = null
 
-    private val _isReadyToScan: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val _isReadyToScan: MutableStateFlow<Boolean> = MutableStateFlow(adapter.isEnabled)
     override val isReadyToScan: Flow<Boolean>
         get() = _isReadyToScan.asStateFlow()
-
-    private companion object {
-        val APP_UUID: UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000")
-    }
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -44,9 +40,13 @@ class BluetoothConnection @Inject constructor(
                     BluetoothAdapter.EXTRA_STATE,
                     BluetoothAdapter.ERROR
                 )
-                _isReadyToScan.value == (state == BluetoothAdapter.STATE_ON)
+                _isReadyToScan.value = (state == BluetoothAdapter.STATE_ON)
             }
         }
+    }
+
+    init {
+        context.registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
     }
 
     @RequiresPermission(permission.BLUETOOTH_CONNECT)
@@ -66,7 +66,6 @@ class BluetoothConnection @Inject constructor(
 
     @RequiresPermission(permission.BLUETOOTH_SCAN)
     override suspend fun connect(device: Device) {
-        context.registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
         val remoteDevice = adapter.getRemoteDevice(device.address)
         socket = remoteDevice.createRfcommSocketToServiceRecord(APP_UUID)
         adapter.cancelDiscovery()
@@ -77,5 +76,9 @@ class BluetoothConnection @Inject constructor(
         socket?.close()
         socket = null
         context.unregisterReceiver(receiver)
+    }
+
+    private companion object {
+        val APP_UUID: UUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000")
     }
 }
