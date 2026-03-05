@@ -15,6 +15,6 @@ fun AppNavigation(modifier: Modifier) {
         navController = navController,
         startDestination = ConnectionRoute
     ) {
-        connectionScreen(onDeviceClick = { })
+        connectionScreen()
     }
 }

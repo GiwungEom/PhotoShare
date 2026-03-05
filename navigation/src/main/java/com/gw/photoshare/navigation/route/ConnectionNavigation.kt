@@ -8,10 +8,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 object ConnectionRoute
 
-fun NavGraphBuilder.connectionScreen(
-    onDeviceClick: (String) -> Unit
-) {
+fun NavGraphBuilder.connectionScreen() {
     composable<ConnectionRoute> {
-        ConnectionScreen(onDeviceClick = onDeviceClick)
+        ConnectionScreen()
     }
 }
