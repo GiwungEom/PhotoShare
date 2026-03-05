@@ -22,6 +22,6 @@ class FakeConnection @Inject constructor() : DeviceConnection {
         )
     }
 
-    override val isAvailable: Flow<Boolean>
+    override val isReadyToScan: Flow<Boolean>
         get() = emptyFlow()
 }
