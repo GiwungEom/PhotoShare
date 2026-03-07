@@ -1,5 +1,9 @@
 package com.gw.bluetooth.main.ui.connect
 
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -54,15 +58,34 @@ private fun BluetoothInfo(
     isScanReady: Boolean,
     onScanClicked: () -> Unit = {}
 ) {
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val allGranted = permissions.values.all { it }
+        if (allGranted) {
+            onScanClicked()
+        }
+    }
+
     Row(verticalAlignment = Alignment.CenterVertically) {
         val readyText = if (isScanReady) "Ready" else "Not Ready"
         Text("Bluetooth is $readyText")
         Spacer(modifier = Modifier.weight(1f))
         Button(
             enabled = isScanReady,
-            onClick = onScanClicked
+            onClick = { launcher.launch(bluetoothPermissions) }
         ) {
             Text("Search Device")
         }
     }
 }
+
+private val bluetoothPermissions: Array<String>
+    get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        arrayOf(
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.BLUETOOTH_SCAN
+        )
+    } else {
+        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+    }
