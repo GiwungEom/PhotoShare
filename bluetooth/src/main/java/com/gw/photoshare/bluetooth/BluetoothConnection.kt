@@ -65,11 +65,12 @@ class BluetoothConnection @Inject constructor(
     }
 
     @RequiresPermission(permission.BLUETOOTH_SCAN)
-    override suspend fun connect(device: Device) {
+    override suspend fun connect(device: Device): Boolean {
         val remoteDevice = adapter.getRemoteDevice(device.address)
         socket = remoteDevice.createRfcommSocketToServiceRecord(APP_UUID)
         adapter.cancelDiscovery()
-        socket?.connect()
+        socket?.connect() ?: return false
+        return true
     }
 
     override fun disconnect() {
