@@ -1,13 +1,18 @@
 package com.gw.photoshare.domain.connection.fake
 
+import com.gw.photoshare.domain.communication.Communication
+import com.gw.photoshare.domain.communication.FakeCommunication
 import com.gw.photoshare.domain.connection.Device
 import com.gw.photoshare.domain.connection.DeviceConnection
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 class FakeDeviceConnection @Inject constructor() : DeviceConnection {
+    private var isConnected = false
     override val isReadyToScan: Flow<Boolean>
         get() = flow {
             delay(1000L)
@@ -26,5 +31,13 @@ class FakeDeviceConnection @Inject constructor() : DeviceConnection {
 
     override fun disconnect() {
 
+    }
+
+    override fun createCommunication(): Communication {
+        check(isConnected)
+        return FakeCommunication(
+            ByteArrayInputStream(byteArrayOf(1, 2, 3)),
+            ByteArrayOutputStream()
+        )
     }
 }

@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.annotation.RequiresPermission
+import com.gw.photoshare.domain.communication.Communication
 import com.gw.photoshare.domain.connection.Device
 import com.gw.photoshare.domain.connection.DeviceConnection
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -77,6 +78,10 @@ class BluetoothConnection @Inject constructor(
         socket?.close()
         socket = null
         context.unregisterReceiver(receiver)
+    }
+
+    override fun createCommunication(): Communication {
+        TODO("Not yet implemented")
     }
 
     private companion object {
