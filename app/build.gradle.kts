@@ -42,6 +42,10 @@ android {
 }
 
 dependencies {
+    implementation(project(":bluetooth"))
+    implementation(project(":communication"))
+    implementation(project(":domain"))
+    implementation(project(":navigation"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -53,9 +57,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    implementation(project(":bluetooth"))
-    implementation(project(":domain"))
-    implementation(project(":navigation"))
+    
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
