@@ -13,6 +13,7 @@ material = "1.12.0"
 jetbrainsKotlinJvm = "2.0.21"
 coroutines = "1.9.0"
 kotlinxSerialization = "1.7.3"
+mockk = "1.13.16"
 hilt = "2.56.2"
 ksp = "2.0.21-1.0.28"
 
@@ -23,6 +24,7 @@ javax-inject = { group = "javax.inject", name = "javax.inject", version = "1" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version = "2.8.9" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version = "1.2.0" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
