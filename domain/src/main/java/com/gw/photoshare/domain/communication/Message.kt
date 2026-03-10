@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed class Message {
     @Serializable
-    data class FileListShare(val fromDate: Long, val toDate: Long) : Message()
+    data class FileListShare(val fromTimeMillis: Long, val toTimeMillis: Long) : Message()
 }
