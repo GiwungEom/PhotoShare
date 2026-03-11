@@ -1,5 +1,6 @@
 package com.gw.photoshare.domain.media
 
+
 interface MediaRepository {
-    fun getMedia(): List<String>
+    suspend fun getMedia(): List<Media>
 }
