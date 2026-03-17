@@ -11,6 +11,7 @@ android {
 
     defaultConfig {
         minSdk = 24
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -28,5 +29,10 @@ android {
         implementation(libs.javax.inject)
         implementation(libs.hilt.android)
         ksp(libs.hilt.compiler)
+
+        testImplementation(libs.junit)
+        androidTestImplementation(libs.androidx.junit)
+        androidTestImplementation(libs.androidx.test.runner)
+        androidTestImplementation(libs.kotlinx.coroutines.test)
     }
 }
